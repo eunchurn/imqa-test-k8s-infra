@@ -1,0 +1,735 @@
+affinity: {}
+apiVersions: []
+args: []
+auth:
+  existingSecret: ""
+  existingSecretKey: ""
+  password: e0rdBg86jm
+  username: default
+automountServiceAccountToken: false
+autoscaling:
+  vpa:
+    annotations: {}
+    controlledResources: []
+    enabled: false
+    maxAllowed: {}
+    minAllowed: {}
+    updatePolicy:
+      updateMode: Auto
+clusterDomain: cluster.local
+clusterName: cluster
+command: []
+commonAnnotations: {}
+commonLabels: {}
+configdFiles:
+  backup.xml: "<clickhouse>\n  <backups>\n    <allowed_disk>backup_disk</allowed_disk>\n
+    \ </backups>\n</clickhouse>        "
+  default-database.xml: |-
+    <clickhouse>
+      <default_database>default</default_database>
+    </clickhouse>
+  display-name.xml: |-
+    <clickhouse>
+      <display_name>imqa-clickhouse</display_name>
+    </clickhouse>
+  distributed-ddl.xml: |-
+    <clickhouse>
+      <distributed_ddl>
+        <path>/clickhouse/task_queue/ddl</path>
+      </distributed_ddl>
+    </clickhouse>
+  function.xml: |-
+    <clickhouse>
+      <functions>
+        <function>
+            <type>executable</type>
+            <name>histogramQuantile</name>
+            <return_type>Float64</return_type>
+            <argument>
+                <type>Array(Float64)</type>
+                <name>buckets</name>
+            </argument>
+            <argument>
+                <type>Array(Float64)</type>
+                <name>counts</name>
+            </argument>
+            <argument>
+                <type>Float64</type>
+                <name>quantile</name>
+            </argument>
+            <format>CSV</format>
+            <command>./histogramQuantile</command>
+        </function>
+      </functions>
+    </clickhouse>
+  listen-host.xml: |-
+    <clickhouse>
+      <listen_host>0.0.0.0</listen_host>
+    </clickhouse>
+  logger.xml: |-
+    <clickhouse>
+      <logger>
+        <level>information</level>
+        <log>/var/lib/clickhouse/logs/clickhouse-server.log</log>
+        <errorlog>/var/lib/clickhouse/logs/clickhouse-server.err.log</errorlog>
+        <size>1000M</size>
+        <count>3</count>
+      </logger>
+    </clickhouse>
+  macros.xml: |-
+    <clickhouse>
+      <macros>
+        <shard from_env="CLICKHOUSE_SHARD_ID" replace="true">0</shard>
+        <replica from_env="CLICKHOUSE_REPLICA_ID" replace="true">0</replica>
+        <cluster>cluster</cluster>
+      </macros>
+    </clickhouse>
+  prometheus.xml: |-
+    <clickhouse>
+      <prometheus>
+        <endpoint>/metrics</endpoint>
+        <port>9363</port>
+        <metrics>true</metrics>
+        <events>true</events>
+        <asynchronous_metrics>true</asynchronous_metrics>
+        <status_info>true</status_info>
+      </prometheus>
+    </clickhouse>
+  remote_servers.xml: "<clickhouse>\n  <remote_servers>\n    <cluster>\n      <shard>\n
+    \       <internal_replication>true</internal_replication>\n        <replica>\n
+    \         <host>clickhouse-shard0-0.clickhouse-headless.test.svc.cluster.local</host>\n
+    \         <port>9000</port>\n        </replica>\n      </shard>       \n    </cluster>\n
+    \ </remote_servers>\n</clickhouse>"
+  storage.xml: |-
+    <clickhouse>
+      <storage_configuration>
+        <disks>
+          <backup_disk>
+            <path>/var/lib/clickhouse/backup/</path>
+          </backup_disk>
+        </disks>
+        <policies>
+          <default>
+            <volumes>
+              <main>
+                <disk>default</disk>
+              </main>
+              <backup>
+                <disk>backup_disk</disk>
+              </backup>
+            </volumes>
+          </default>
+        </policies>
+      </storage_configuration>
+    </clickhouse>
+  user-directories.xml: |-
+    <clickhouse>
+      <user_directories>
+        <users_xml>
+          <path>users.xml</path>
+        </users_xml>
+        <local_directory>
+          <path>/var/lib/clickhouse/access/</path>
+        </local_directory>
+      </user_directories>
+    </clickhouse>
+containerPorts:
+  http: 8123
+  https: 8443
+  interserver: 9009
+  metrics: 8001
+  mysql: 9004
+  postgresql: 9005
+  tcp: 9000
+  tcpSecure: 9440
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  enabled: true
+  privileged: false
+  readOnlyRootFilesystem: false
+  runAsGroup: 1001
+  runAsNonRoot: true
+  runAsUser: 1001
+  seLinuxOptions: {}
+  seccompProfile:
+    type: RuntimeDefault
+customLivenessProbe: {}
+customReadinessProbe: {}
+customStartupProbe: {}
+defaultInitContainers:
+  volumePermissions:
+    command:
+    - bash
+    - -ec
+    - "echo \"[volumePermissions] Fixing ownership\"\nmkdir -p /bitnami/clickhouse\nchown
+      -R 1001:1001 /bitnami/clickhouse\nmkdir -p /bitnami/clickhouse/data/preprocessed_configs\nmkdir
+      -p /bitnami/clickhouse/tmp/preprocessed_configs\nchown -R 1001:1001 /bitnami/clickhouse/data\nchown
+      -R 1001:1001 /bitnami/clickhouse/tmp\nls -la /bitnami/clickhouse/      \n"
+    containerSecurityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        add: []
+        drop:
+        - ALL
+      enabled: true
+      privileged: true
+      runAsUser: 0
+      seLinuxOptions: {}
+      seccompProfile:
+        type: RuntimeDefault
+    enabled: false
+    image:
+      digest: ""
+      pullPolicy: IfNotPresent
+      pullSecrets: []
+      registry: docker.io
+      repository: bitnami/os-shell
+      tag: 12-debian-12-r42
+    resources: {}
+    resourcesPreset: nano
+diagnosticMode:
+  args:
+  - infinity
+  command:
+  - sleep
+  enabled: false
+distributeReplicasByZone: false
+existingConfigdConfigmap: ""
+existingConfigmap: ""
+existingUsersdConfigmap: ""
+existingUsersdSecret: ""
+externalZookeeper:
+  port: 2888
+  servers: []
+extraDeploy: []
+extraEnvVars:
+- name: CLICKHOUSE_SHARD_ID
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.name
+- name: CLICKHOUSE_REPLICA_ID
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.name
+extraEnvVarsCM: ""
+extraEnvVarsSecret: ""
+extraVolumeClaimTemplates: []
+extraVolumeMounts:
+- mountPath: /var/lib/clickhouse/user_scripts
+  name: user-scripts
+extraVolumes:
+- emptyDir: {}
+  name: user-scripts
+fullnameOverride: ""
+global:
+  compatibility:
+    openshift:
+      adaptSecurityContext: auto
+  defaultStorageClass: ""
+  imagePullSecrets:
+  - regcred
+  imageRegistry: ""
+  security:
+    allowInsecureImages: false
+hostAliases: []
+image:
+  debug: false
+  digest: ""
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+  registry: docker.io
+  repository: bitnami/clickhouse
+  tag: 25.3.2-debian-12-r3
+ingress:
+  annotations: {}
+  apiVersion: ""
+  enabled: false
+  extraHosts: []
+  extraPaths: []
+  extraRules: []
+  extraTls: []
+  hostname: clickhouse.local
+  ingressClassName: ""
+  path: /
+  pathType: ImplementationSpecific
+  secrets: []
+  selfSigned: false
+  tls: false
+initContainers:
+- command:
+  - bash
+  - -ec
+  - |
+    echo "[fix-permissions] Bitnami non-root setup start"
+    ls -la /var/lib/
+    echo "[fix-permissions] creating directories"
+    mkdir -p /var/lib/clickhouse/data/preprocessed_configs
+    mkdir -p /var/lib/clickhouse/tmp/preprocessed_configs
+    mkdir -p /var/lib/clickhouse/user_files
+    mkdir -p /var/lib/clickhouse/format_schemas
+    echo "[fix-permissions] setting ownership (1001:root)"
+    chown -R 1001:root /var/lib/clickhouse
+    echo "[fix-permissions] setting permissions (g+rwX)"
+    chmod -R g+rwX /var/lib/clickhouse
+    echo "[fix-permissions] Bitnami non-root setup done"
+    ls -la /var/lib/clickhouse/
+  image: docker.io/bitnami/os-shell:12-debian-12-r42
+  name: fix-permissions
+  securityContext:
+    runAsGroup: 0
+    runAsUser: 0
+  volumeMounts:
+  - mountPath: /var/lib/clickhouse
+    name: data
+- command:
+  - cp
+  - /var/lib/clickhouse/user_scripts/histogramQuantile
+  - /user-scripts/
+  image: imqav3.azurecr.io/clickhouse-server:with-script
+  name: copy-binary
+  volumeMounts:
+  - mountPath: /user-scripts
+    name: user-scripts
+initdbScripts: {}
+initdbScriptsSecret: ""
+keeper:
+  affinity: {}
+  args: []
+  automountServiceAccountToken: false
+  autoscaling:
+    vpa:
+      annotations: {}
+      controlledResources: []
+      enabled: false
+      maxAllowed: {}
+      minAllowed: {}
+      updatePolicy:
+        updateMode: Auto
+  command: []
+  configdFiles:
+    logger.xml: |-
+      <clickhouse>
+        <logger>
+          <level>information</level>
+          <log>/bitnami/clickhouse-keeper/logs/clickhouse-keeper.log</log>
+          <errorlog>/bitnami/clickhouse-keeper/logs/clickhouse-keeper.err.log</errorlog>
+          <size>1000M</size>
+          <count>3</count>
+        </logger>
+      </clickhouse>
+  configuration: "<clickhouse>\n  <keeper_server>\n    <tcp_port>9181</tcp_port>\n
+    \   <server_id>0</server_id>\n    <listen_host>0.0.0.0</listen_host>\n    <interserver_listen_host>0.0.0.0</interserver_listen_host>\n
+    \   <enable_ipv6>false</enable_ipv6>\n    <raft_configuration>\n      <server>\n
+    \       <id>0</id>\n        <hostname>clickhouse-keeper-0.clickhouse-keeper-headless.test.svc.cluster.local</hostname>\n
+    \       <port>9234</port>\n      </server>\n    </raft_configuration>\n  </keeper_server>\n
+    \ <path>/bitnami/clickhouse-keeper/data</path>\n  <tmp_path>/tmp</tmp_path>\n</clickhouse>
+    \   "
+  containerPorts:
+    raft: 9234
+    tcp: 9181
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    enabled: true
+    privileged: false
+    readOnlyRootFilesystem: true
+    runAsGroup: 1001
+    runAsNonRoot: true
+    runAsUser: 1001
+    seLinuxOptions: {}
+    seccompProfile:
+      type: RuntimeDefault
+  customLivenessProbe: {}
+  customReadinessProbe: {}
+  customStartupProbe: {}
+  enabled: true
+  existingConfigdConfigmap: ""
+  existingConfigmap: ""
+  existingUsersdConfigmap: ""
+  existingUsersdSecret: ""
+  extraContainerPorts: []
+  extraEnvVars: []
+  extraEnvVarsCM: ""
+  extraEnvVarsSecret: ""
+  extraVolumeMounts: []
+  extraVolumes: []
+  hostAliases: []
+  image:
+    debug: false
+    digest: ""
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+    registry: docker.io
+    repository: bitnami/clickhouse-keeper
+    tag: 25.3.2-debian-12-r7
+  initContainers:
+  - command:
+    - bash
+    - -ec
+    - |
+      echo "[fix-keeper-permissions] Bitnami non-root setup start"
+      ls -la /bitnami/
+      echo "[fix-keeper-permissions] creating directories"
+      mkdir -p /bitnami/clickhouse-keeper/data
+      mkdir -p /bitnami/clickhouse-keeper/logs
+      mkdir -p /tmp
+      echo "[fix-keeper-permissions] setting ownership (1001:root)"
+      chown -R 1001:root /bitnami/clickhouse-keeper
+      chown -R 1001:root /tmp
+      echo "[fix-keeper-permissions] setting permissions (g+rwX)"
+      chmod -R g+rwX /bitnami/clickhouse-keeper
+      chmod -R g+rwX /tmp
+      echo "[fix-keeper-permissions] creating history file"
+      touch /tmp/.keeper-client-history
+      chown 1001:root /tmp/.keeper-client-history
+      chmod 664 /tmp/.keeper-client-history
+      echo "[fix-keeper-permissions] Bitnami non-root setup done"
+      ls -la /bitnami/clickhouse-keeper/
+    image: docker.io/bitnami/os-shell:12-debian-12-r42
+    name: fix-keeper-permissions
+    securityContext:
+      runAsGroup: 0
+      runAsUser: 0
+    volumeMounts:
+    - mountPath: /bitnami/clickhouse-keeper
+      name: data
+  lifecycleHooks: {}
+  livenessProbe:
+    enabled: true
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  networkPolicy:
+    addExternalClientAccess: true
+    allowExternal: true
+    allowExternalEgress: true
+    enabled: true
+    extraEgress: []
+    extraIngress: []
+    ingressNSMatchLabels: {}
+    ingressNSPodMatchLabels: {}
+  nodeAffinityPreset:
+    key: ""
+    type: ""
+    values: []
+  nodeSelector: {}
+  pdb:
+    create: true
+    maxUnavailable: ""
+    minAvailable: ""
+  persistence:
+    accessModes:
+    - ReadWriteOnce
+    annotations: {}
+    dataSource: {}
+    enabled: true
+    existingClaim: ""
+    labels: {}
+    mountPath: /bitnami/clickhouse-keeper
+    selector: {}
+    size: 8Gi
+    storageClass: ""
+  persistentVolumeClaimRetentionPolicy:
+    enabled: false
+    whenDeleted: Retain
+    whenScaled: Retain
+  podAffinityPreset: ""
+  podAnnotations: {}
+  podAntiAffinityPreset: soft
+  podLabels: {}
+  podManagementPolicy: Parallel
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1001
+    fsGroupChangePolicy: Always
+    supplementalGroups: []
+    sysctls: []
+  priorityClassName: ""
+  readinessProbe:
+    enabled: true
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 4
+      memory: 6Gi
+    requests:
+      cpu: 1
+      memory: 1Gi
+  resourcesPreset: small
+  schedulerName: ""
+  service:
+    annotations: {}
+    clusterIP: ""
+    externalTrafficPolicy: Cluster
+    extraPorts: []
+    headless:
+      annotations: {}
+      extraPorts: []
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    nodePorts:
+      raft: ""
+      tcp: ""
+    ports:
+      raft: 9234
+      tcp: 9181
+    sessionAffinity: None
+    sessionAffinityConfig: {}
+    type: ClusterIP
+  sidecars: []
+  startupProbe:
+    enabled: false
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  terminationGracePeriodSeconds: ""
+  tolerations: []
+  topologySpreadConstraints: []
+  updateStrategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+  usersdFiles: {}
+kubeVersion: ""
+lifecycleHooks: {}
+livenessProbe:
+  enabled: true
+  failureThreshold: 3
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+logLevel: information
+metrics:
+  enabled: false
+  podAnnotations: {}
+  prometheusRule:
+    additionalLabels: {}
+    enabled: false
+    namespace: ""
+    rules: []
+  serviceMonitor:
+    annotations: {}
+    enabled: false
+    honorLabels: false
+    interval: ""
+    jobLabel: ""
+    labels: {}
+    metricRelabelings: []
+    namespace: ""
+    relabelings: []
+    scrapeTimeout: ""
+    selector: {}
+nameOverride: ""
+namespaceOverride: ""
+networkPolicy:
+  addExternalClientAccess: true
+  allowExternal: true
+  allowExternalEgress: true
+  enabled: true
+  extraEgress: []
+  extraIngress: []
+  ingressNSMatchLabels: {}
+  ingressNSPodMatchLabels: {}
+nodeAffinityPreset:
+  key: ""
+  type: ""
+  values: []
+nodeSelector: {}
+pdb:
+  create: true
+  maxUnavailable: ""
+  minAvailable: ""
+persistence:
+  accessModes:
+  - ReadWriteOnce
+  annotations: {}
+  dataSource: {}
+  enabled: true
+  existingClaim: ""
+  labels: {}
+  mountPath: /var/lib/clickhouse
+  selector: {}
+  size: 8Gi
+  storageClass: ""
+persistentVolumeClaimRetentionPolicy:
+  enabled: false
+  whenDeleted: Retain
+  whenScaled: Retain
+podAffinityPreset: ""
+podAnnotations: {}
+podAntiAffinityPreset: soft
+podLabels: {}
+podManagementPolicy: Parallel
+podSecurityContext:
+  enabled: true
+  fsGroup: 1001
+  fsGroupChangePolicy: Always
+  supplementalGroups: []
+  sysctls: []
+priorityClassName: ""
+readinessProbe:
+  enabled: true
+  failureThreshold: 3
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+replicaCount: 1
+resources:
+  limits:
+    cpu: 4
+    memory: 6Gi
+  requests:
+    cpu: 1
+    memory: 4Gi
+resourcesPreset: small
+sampling:
+  configuration: |-
+    <clickhouse>
+      <path>/var/lib/clickhouse/data</path>
+      <tmp_path>/var/lib/clickhouse/tmp</tmp_path>
+      <user_files_path>/var/lib/clickhouse/user_files</user_files_path>
+      <format_schema_path>/var/lib/clickhouse/format_schemas</format_schema_path>
+      <preprocessed_configs_path>/var/lib/clickhouse/tmp/preprocessed_configs</preprocessed_configs_path>
+    </clickhouse>
+  enabled: false
+schedulerName: ""
+service:
+  annotations: {}
+  clusterIP: ""
+  externalTrafficPolicy: Cluster
+  extraPorts: []
+  headless:
+    annotations: {}
+    extraPorts: []
+  loadBalancerAnnotations: []
+  loadBalancerIP: ""
+  loadBalancerIPs: []
+  loadBalancerSourceRanges: []
+  nodePorts:
+    http: 31557
+    https: ""
+    interserver: ""
+    metrics: ""
+    mysql: ""
+    postgresql: ""
+    tcp: ""
+    tcpSecure: ""
+  perReplicaAccess: false
+  ports:
+    http: 8123
+    https: 443
+    interserver: 9009
+    metrics: 8001
+    mysql: 9004
+    postgresql: 9005
+    tcp: 9000
+    tcpSecure: 9440
+  sessionAffinity: None
+  sessionAffinityConfig: {}
+  type: NodePort
+serviceAccount:
+  annotations: {}
+  automountServiceAccountToken: false
+  create: true
+  name: ""
+shards: 1
+sidecars: []
+startdbScripts: {}
+startdbScriptsSecret: ""
+startupProbe:
+  enabled: false
+  failureThreshold: 3
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+terminationGracePeriodSeconds: ""
+tls:
+  autoGenerated:
+    certManager:
+      duration: 2160h
+      existingIssuer: ""
+      existingIssuerKind: ""
+      keyAlgorithm: RSA
+      keySize: 2048
+      renewBefore: 360h
+    enabled: true
+    engine: helm
+  ca: ""
+  enabled: false
+  existingCASecret: ""
+  server:
+    cert: ""
+    existingSecret: ""
+    key: ""
+tolerations: []
+topologySpreadConstraints: []
+updateStrategy:
+  rollingUpdate: {}
+  type: RollingUpdate
+usePasswordFiles: true
+usersdFiles:
+  users.xml: |-
+    <?xml version="1.0"?>
+    <clickhouse replace="true">
+      <profiles>
+        <default>
+          <max_memory_usage>10000000000</max_memory_usage>
+          <use_uncompressed_cache>0</use_uncompressed_cache>
+          <load_balancing>in_order</load_balancing>
+          <log_queries>1</log_queries>
+        </default>
+      </profiles>
+      <users>
+        <default>
+          <access_management>1</access_management>
+          <profile>default</profile>
+          <networks>
+            <ip>::/0</ip>
+          </networks>
+          <quota>default</quota>
+          <named_collection_control>1</named_collection_control>
+          <show_named_collections>1</show_named_collections>
+          <show_named_collections_secrets>1</show_named_collections_secrets>
+        </default>
+        <tester>
+          <access_management>1</access_management>
+          <password>tester</password>
+          <networks>
+            <ip>::/0</ip>
+          </networks>
+          <profile>default</profile>
+          <quota>default</quota>
+          <named_collection_control>1</named_collection_control>
+          <show_named_collections>1</show_named_collections>
+          <show_named_collections_secrets>1</show_named_collections_secrets>
+        </tester>
+      </users>
+      <quotas>
+        <default>
+          <interval>
+            <duration>3600</duration>
+            <queries>0</queries>
+            <errors>0</errors>
+            <result_rows>0</result_rows>
+            <read_rows>0</read_rows>
+            <execution_time>0</execution_time>
+          </interval>
+        </default>
+      </quotas>
+    </clickhouse>

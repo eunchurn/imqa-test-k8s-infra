@@ -1,0 +1,135 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/healthcheck-port: "31300"
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80},{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-certificate-no: "47914"
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/target-type: instance
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.k8s.io/v1","kind":"Ingress","metadata":{"annotations":{"alb.ingress.kubernetes.io/healthcheck-path":"/","alb.ingress.kubernetes.io/healthcheck-port":"31300","alb.ingress.kubernetes.io/listen-ports":"[{\"HTTP\": 80},{\"HTTPS\":443}]","alb.ingress.kubernetes.io/ssl-certificate-no":"47914","alb.ingress.kubernetes.io/ssl-redirect":"443","alb.ingress.kubernetes.io/target-type":"instance","kubernetes.io/ingress.class":"alb","service.beta.kubernetes.io/ncloud-load-balancer-inbound-source":"0.0.0.0/0","service.beta.kubernetes.io/ncloud-load-balancer-layer-type":"alb"},"name":"test-imqa-alb-ingress","namespace":"test"},"spec":{"defaultBackend":{"service":{"name":"imqa-web","port":{"number":3301}}},"ingressClassName":"alb","rules":[{"host":"test-imqa.imqa.io","http":{"paths":[{"backend":{"service":{"name":"imqa-web","port":{"number":3301}}},"path":"/api/auth","pathType":"Prefix"},{"backend":{"service":{"name":"api","port":{"number":8000}}},"path":"/api","pathType":"Prefix"},{"backend":{"service":{"name":"api","port":{"number":8000}}},"path":"/graphql","pathType":"Prefix"},{"backend":{"service":{"name":"api","port":{"number":8000}}},"path":"/assets","pathType":"Prefix"},{"backend":{"service":{"name":"keycloak","port":{"number":8080}}},"path":"/realms","pathType":"Prefix"},{"backend":{"service":{"name":"keycloak","port":{"number":8080}}},"path":"/resources","pathType":"Prefix"},{"backend":{"service":{"name":"keycloak","port":{"number":8080}}},"path":"/admin","pathType":"Prefix"},{"backend":{"service":{"name":"api","port":{"number":8000}}},"path":"/docs","pathType":"Prefix"},{"backend":{"service":{"name":"imqa-web","port":{"number":3301}}},"path":"/","pathType":"Prefix"},{"backend":{"service":{"name":"imqa-web","port":{"number":3301}}},"path":"/_next","pathType":"Prefix"},{"backend":{"service":{"name":"api","port":{"number":8000}}},"path":"/auth","pathType":"Prefix"}]}},{"host":"test-collector.imqa.io","http":{"paths":[{"backend":{"service":{"name":"otel-collector","port":{"number":4318}}},"path":"/","pathType":"Prefix"}]}},{"host":"sso.imqa.io","http":{"paths":[{"backend":{"service":{"name":"sso-keycloak","port":{"number":8080}}},"path":"/","pathType":"Prefix"}]}}]}}
+    kubernetes.io/ingress.class: alb
+    service.beta.kubernetes.io/ncloud-load-balancer-inbound-source: 0.0.0.0/0
+    service.beta.kubernetes.io/ncloud-load-balancer-layer-type: alb
+  creationTimestamp: "2025-07-04T04:55:59Z"
+  finalizers:
+  - ncloud.com/alb-106704118-ingress
+  generation: 3
+  name: test-imqa-alb-ingress
+  namespace: test
+  resourceVersion: "24736646"
+  uid: 16a43ae7-10fa-401c-aedb-29fe1f3e5a99
+spec:
+  defaultBackend:
+    service:
+      name: imqa-web
+      port:
+        number: 3301
+  ingressClassName: alb
+  rules:
+  - host: test-imqa.imqa.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: imqa-web
+            port:
+              number: 3301
+        path: /api/auth
+        pathType: Prefix
+      - backend:
+          service:
+            name: api
+            port:
+              number: 8000
+        path: /api
+        pathType: Prefix
+      - backend:
+          service:
+            name: api
+            port:
+              number: 8000
+        path: /graphql
+        pathType: Prefix
+      - backend:
+          service:
+            name: api
+            port:
+              number: 8000
+        path: /assets
+        pathType: Prefix
+      - backend:
+          service:
+            name: keycloak
+            port:
+              number: 8080
+        path: /realms
+        pathType: Prefix
+      - backend:
+          service:
+            name: keycloak
+            port:
+              number: 8080
+        path: /resources
+        pathType: Prefix
+      - backend:
+          service:
+            name: keycloak
+            port:
+              number: 8080
+        path: /admin
+        pathType: Prefix
+      - backend:
+          service:
+            name: api
+            port:
+              number: 8000
+        path: /docs
+        pathType: Prefix
+      - backend:
+          service:
+            name: imqa-web
+            port:
+              number: 3301
+        path: /
+        pathType: Prefix
+      - backend:
+          service:
+            name: imqa-web
+            port:
+              number: 3301
+        path: /_next
+        pathType: Prefix
+      - backend:
+          service:
+            name: api
+            port:
+              number: 8000
+        path: /auth
+        pathType: Prefix
+  - host: test-collector.imqa.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: otel-collector
+            port:
+              number: 4318
+        path: /
+        pathType: Prefix
+  - host: sso.imqa.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: sso-keycloak
+            port:
+              number: 8080
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer:
+    ingress:
+    - hostname: ing-test-testimqaalbingr-be72b-106704118-f6ac01900eeb.kr.lb.naverncp.com

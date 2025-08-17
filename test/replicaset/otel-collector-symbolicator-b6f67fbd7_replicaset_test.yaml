@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  annotations:
+    deployment.kubernetes.io/desired-replicas: "1"
+    deployment.kubernetes.io/max-replicas: "2"
+    deployment.kubernetes.io/revision: "4"
+  labels:
+    app: otel-collector-symbolicator
+    pod-template-hash: b6f67fbd7
+  name: otel-collector-symbolicator-b6f67fbd7
+  namespace: test
+  ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: otel-collector-symbolicator
+      uid: 637010fb-d990-4800-a666-0611c946fc8a
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otel-collector-symbolicator
+      pod-template-hash: b6f67fbd7
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-08-14T18:33:23+09:00"
+      labels:
+        app: otel-collector-symbolicator
+        pod-template-hash: b6f67fbd7
+    spec:
+      containers:
+        - args:
+            - --config=/etc/otel-collector-symbolicator-config.yaml
+          env:
+            - name: CONFIG_PATH
+              value: /etc/otel-collector-symbolicator-config.yaml
+            - name: SERVICE_HOST
+              value: default:e0rdBg86jm@clickhouse.test.svc.cluster.local:9000
+            - name: API_DOMAIN
+              value: https://test-imqa.imqa.io
+            - name: OTEL_COLLECTOR_SYMBOLICATOR_API_HOST
+              value: http://api.test.svc.cluster.local:8000
+            - name: OTEL_COLLECTOR_SYMBOLICATOR_CLICKHOUSE_DSN
+              value: tcp://default:e0rdBg86jm@clickhouse.test.svc.cluster.local:9000
+          image: imqav3.azurecr.io/otel-collector-symbolicator:1.4.0-rc.1.4
+          imagePullPolicy: Always
+          name: otel-collector-symbolicator
+          ports:
+            - containerPort: 4319
+              name: otlp-http
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /etc/otel-collector-symbolicator-config.yaml
+              name: config-volume
+              subPath: otel-collector-symbolicator-config.yaml
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: regcred
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: otel-collector-symbolicator-config
+          name: config-volume
