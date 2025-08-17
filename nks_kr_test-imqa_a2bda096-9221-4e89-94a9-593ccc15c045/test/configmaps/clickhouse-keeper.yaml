@@ -1,0 +1,36 @@
+apiVersion: v1
+data:
+  keeper_config.xml: |
+    <clickhouse>
+      <keeper_server>
+        <tcp_port>9181</tcp_port>
+        <server_id>0</server_id>
+        <listen_host>0.0.0.0</listen_host>
+        <interserver_listen_host>0.0.0.0</interserver_listen_host>
+        <enable_ipv6>false</enable_ipv6>
+        <raft_configuration>
+          <server>
+            <id>0</id>
+            <hostname>clickhouse-keeper-0.clickhouse-keeper-headless.test.svc.cluster.local</hostname>
+            <port>9234</port>
+          </server>
+        </raft_configuration>
+      </keeper_server>
+      <path>/bitnami/clickhouse-keeper/data</path>
+      <tmp_path>/tmp</tmp_path>
+    </clickhouse>
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: clickhouse
+    meta.helm.sh/release-namespace: test
+  labels:
+    app.kubernetes.io/component: keeper
+    app.kubernetes.io/instance: clickhouse
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: clickhouse
+    app.kubernetes.io/part-of: clickhouse
+    app.kubernetes.io/version: 25.3.2
+    helm.sh/chart: clickhouse-9.1.1
+  name: clickhouse-keeper
+  namespace: test

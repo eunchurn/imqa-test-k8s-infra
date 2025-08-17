@@ -1,0 +1,177 @@
+apiVersion: v1
+data:
+  01-listen.xml: |
+    <yandex>
+        <listen_host>::</listen_host>
+        <listen_host>0.0.0.0</listen_host>
+        <listen_try>1</listen_try>
+    </yandex>
+  02-logger.xml: |
+    <yandex>
+        <logger>
+            <level>information</level>
+        </logger>
+    </yandex>
+  03-macros.xml: |
+    <yandex>
+        <macros>
+            <shard from_env="CLICKHOUSE_SHARD_ID"></shard>
+            <replica from_env="CLICKHOUSE_REPLICA_ID"></replica>
+            <layer>clickhouse</layer>
+        </macros>
+    </yandex>
+  05-zookeeper.xml: "<yandex>\n    <zookeeper>\n        <node>\n            <host>clickhouse-keeper-0.clickhouse-keeper-headless.test.svc.cluster.local</host>\n
+    \           <port>9181</port>\n        </node>\n    </zookeeper>    \n</yandex>\n"
+  08-sampling.xml: |
+    <yandex>
+        <asynchronous_insert_log remove="1"/>
+        <asynchronous_metric_log remove="1"/>
+        <error_log remove="1"/>
+        <event_log remove="1"/>
+        <latency_log remove="1"/>
+        <metric_log remove="1"/>
+        #<query_log remove="1"/>
+        <query_metric_log remove="1"/>
+        <query_thread_log remove="1"/>
+        <query_views_log remove="1"/>
+        <part_log remove="1"/>
+        <text_log remove="1"/>
+        <trace_log remove="1"/>
+        <opentelemetry_span_log remove="1"/>
+        <processors_profile_log remove="1"/>
+    </yandex>
+  09-query-log.xml: |
+    <yandex>
+        <query_log>
+            <database>system</database>
+            <table>query_log</table>
+            <max_size>10000000</max_size>
+            <flush_interval_milliseconds>5000</flush_interval_milliseconds>
+        </query_log>
+    </yandex>
+  backup.xml: "<clickhouse>\n  <backups>\n    <allowed_disk>backup_disk</allowed_disk>\n
+    \ </backups>\n</clickhouse>        \n"
+  default-database.xml: |
+    <clickhouse>
+      <default_database>default</default_database>
+    </clickhouse>
+  display-name.xml: |
+    <clickhouse>
+      <display_name>imqa-clickhouse</display_name>
+    </clickhouse>
+  distributed-ddl.xml: |
+    <clickhouse>
+      <distributed_ddl>
+        <path>/clickhouse/task_queue/ddl</path>
+      </distributed_ddl>
+    </clickhouse>
+  function.xml: |
+    <clickhouse>
+      <functions>
+        <function>
+            <type>executable</type>
+            <name>histogramQuantile</name>
+            <return_type>Float64</return_type>
+            <argument>
+                <type>Array(Float64)</type>
+                <name>buckets</name>
+            </argument>
+            <argument>
+                <type>Array(Float64)</type>
+                <name>counts</name>
+            </argument>
+            <argument>
+                <type>Float64</type>
+                <name>quantile</name>
+            </argument>
+            <format>CSV</format>
+            <command>./histogramQuantile</command>
+        </function>
+      </functions>
+    </clickhouse>
+  listen-host.xml: |
+    <clickhouse>
+      <listen_host>0.0.0.0</listen_host>
+    </clickhouse>
+  logger.xml: |
+    <clickhouse>
+      <logger>
+        <level>information</level>
+        <log>/var/lib/clickhouse/logs/clickhouse-server.log</log>
+        <errorlog>/var/lib/clickhouse/logs/clickhouse-server.err.log</errorlog>
+        <size>1000M</size>
+        <count>3</count>
+      </logger>
+    </clickhouse>
+  macros.xml: |
+    <clickhouse>
+      <macros>
+        <shard from_env="CLICKHOUSE_SHARD_ID" replace="true">0</shard>
+        <replica from_env="CLICKHOUSE_REPLICA_ID" replace="true">0</replica>
+        <cluster>cluster</cluster>
+      </macros>
+    </clickhouse>
+  prometheus.xml: |
+    <clickhouse>
+      <prometheus>
+        <endpoint>/metrics</endpoint>
+        <port>9363</port>
+        <metrics>true</metrics>
+        <events>true</events>
+        <asynchronous_metrics>true</asynchronous_metrics>
+        <status_info>true</status_info>
+      </prometheus>
+    </clickhouse>
+  remote_servers.xml: "<clickhouse>\n  <remote_servers>\n    <cluster>\n      <shard>\n
+    \       <internal_replication>true</internal_replication>\n        <replica>\n
+    \         <host>clickhouse-shard0-0.clickhouse-headless.test.svc.cluster.local</host>\n
+    \         <port>9000</port>\n        </replica>\n      </shard>       \n    </cluster>\n
+    \ </remote_servers>\n</clickhouse>\n"
+  storage.xml: |
+    <clickhouse>
+      <storage_configuration>
+        <disks>
+          <backup_disk>
+            <path>/var/lib/clickhouse/backup/</path>
+          </backup_disk>
+        </disks>
+        <policies>
+          <default>
+            <volumes>
+              <main>
+                <disk>default</disk>
+              </main>
+              <backup>
+                <disk>backup_disk</disk>
+              </backup>
+            </volumes>
+          </default>
+        </policies>
+      </storage_configuration>
+    </clickhouse>
+  user-directories.xml: |
+    <clickhouse>
+      <user_directories>
+        <users_xml>
+          <path>users.xml</path>
+        </users_xml>
+        <local_directory>
+          <path>/var/lib/clickhouse/access/</path>
+        </local_directory>
+      </user_directories>
+    </clickhouse>
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: clickhouse
+    meta.helm.sh/release-namespace: test
+  labels:
+    app.kubernetes.io/component: clickhouse
+    app.kubernetes.io/instance: clickhouse
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: clickhouse
+    app.kubernetes.io/part-of: clickhouse
+    app.kubernetes.io/version: 25.3.2
+    helm.sh/chart: clickhouse-9.1.1
+  name: clickhouse-configd
+  namespace: test

@@ -1,0 +1,69 @@
+apiVersion: v1
+data:
+  otel-collector-symbolicator-config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          http:
+            endpoint: 0.0.0.0:4319
+            cors:
+              allowed_origins:
+              - http://*
+              - https://*
+              allowed_headers:
+              - "*"
+    processors:
+      imqasymbolicateprocessor:
+        api_endpoint: ${env:OTEL_COLLECTOR_SYMBOLICATOR_API_HOST}/api/v1/download/mappingFiles
+        enabled: true
+        file_fetch_interval: 60s
+        use_insecure: true
+        file_base_dir: ./file
+        use_atos: true
+        use_proguard: true
+        use_allatori: true
+        use_app_suit: false
+      batch:
+        send_batch_size: 10000
+        send_batch_max_size: 11000
+        timeout: 10s
+
+      memory_limiter:
+        # 80% of maximum memory up to 2G
+        limit_mib: 1500 # 25% of limit up to 2G
+        spike_limit_mib: 512
+        check_interval: 5s # 50% of the maximum memory
+        limit_percentage: 50 # 20% of max memory usage spike expected
+        spike_limit_percentage: 20
+
+    exporters:
+      clickhouse:
+        endpoint: tcp://default:e0rdBg86jm@clickhouse.test.svc.cluster.local:9000
+        traces_database: imqa_traces
+        traces_table_name: stacktrace_symbolicated
+        logs_database: imqa_logs
+        logs_table_name: stacktrace_symbolicated
+        table_engine:
+          name: MergeTree
+          params:
+
+    service:
+      telemetry:
+        metrics:
+          level: none
+      pipelines:
+        traces:
+          receivers: [ otlp ]
+          processors: [ memory_limiter, imqasymbolicateprocessor, batch ]
+          exporters: [ clickhouse ]
+        logs:
+          receivers: [ otlp ]
+          processors: [ memory_limiter, imqasymbolicateprocessor, batch ]
+          exporters: [ clickhouse ]
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"otel-collector-symbolicator-config.yaml":"receivers:\n  otlp:\n    protocols:\n      http:\n        endpoint: 0.0.0.0:4319\n        cors:\n          allowed_origins:\n          - http://*\n          - https://*\n          allowed_headers:\n          - \"*\"\nprocessors:\n  imqasymbolicateprocessor:\n    api_endpoint: ${env:OTEL_COLLECTOR_SYMBOLICATOR_API_HOST}/api/v1/download/mappingFiles\n    enabled: true\n    file_fetch_interval: 60s\n    use_insecure: true\n    file_base_dir: ./file\n    use_atos: true\n    use_proguard: true\n    use_allatori: true\n    use_app_suit: false\n  batch:\n    send_batch_size: 10000\n    send_batch_max_size: 11000\n    timeout: 10s\n\n  memory_limiter:\n    # 80% of maximum memory up to 2G\n    limit_mib: 1500 # 25% of limit up to 2G\n    spike_limit_mib: 512\n    check_interval: 5s # 50% of the maximum memory\n    limit_percentage: 50 # 20% of max memory usage spike expected\n    spike_limit_percentage: 20\n\nexporters:\n  clickhouse:\n    endpoint: tcp://default:e0rdBg86jm@clickhouse.test.svc.cluster.local:9000\n    traces_database: imqa_traces\n    traces_table_name: stacktrace_symbolicated\n    logs_database: imqa_logs\n    logs_table_name: stacktrace_symbolicated\n    table_engine:\n      name: MergeTree\n      params:\n\nservice:\n  telemetry:\n    metrics:\n      level: none\n  pipelines:\n    traces:\n      receivers: [ otlp ]\n      processors: [ memory_limiter, imqasymbolicateprocessor, batch ]\n      exporters: [ clickhouse ]\n    logs:\n      receivers: [ otlp ]\n      processors: [ memory_limiter, imqasymbolicateprocessor, batch ]\n      exporters: [ clickhouse ]\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"otel-collector-symbolicator-config","namespace":"test"}}
+  name: otel-collector-symbolicator-config
+  namespace: test

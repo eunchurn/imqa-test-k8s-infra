@@ -1,0 +1,269 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"StatefulSet","metadata":{"annotations":{},"labels":{"app.kubernetes.io/component":"clickhouse","app.kubernetes.io/instance":"clickhouse","app.kubernetes.io/managed-by":"Helm","app.kubernetes.io/name":"clickhouse","app.kubernetes.io/part-of":"clickhouse","app.kubernetes.io/version":"25.3.2","helm.sh/chart":"clickhouse-9.1.1","shard":"0"},"name":"clickhouse-shard0","namespace":"test"},"spec":{"persistentVolumeClaimRetentionPolicy":{"whenDeleted":"Retain","whenScaled":"Retain"},"podManagementPolicy":"Parallel","replicas":1,"selector":{"matchLabels":{"app.kubernetes.io/component":"clickhouse","app.kubernetes.io/instance":"clickhouse","app.kubernetes.io/name":"clickhouse","app.kubernetes.io/part-of":"clickhouse","shard":"0"}},"serviceName":"clickhouse-headless","template":{"metadata":{"annotations":{"checksum/configd-configuration":"74685ab15115fb284665d0893b0b78accabcca6bdd2bd6606fde5c59499813ee","checksum/usersd-configuration":"98241b032296b60ffd3edace4e44c92f89c745ebc9458338d9e89fd6b7a557f5"},"labels":{"app.kubernetes.io/component":"clickhouse","app.kubernetes.io/instance":"clickhouse","app.kubernetes.io/managed-by":"Helm","app.kubernetes.io/name":"clickhouse","app.kubernetes.io/part-of":"clickhouse","app.kubernetes.io/version":"25.3.2","helm.sh/chart":"clickhouse-9.1.1","shard":"0"}},"spec":{"affinity":{"podAntiAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"podAffinityTerm":{"labelSelector":{"matchLabels":{"app.kubernetes.io/component":"clickhouse","app.kubernetes.io/instance":"clickhouse","app.kubernetes.io/name":"clickhouse"}},"topologyKey":"kubernetes.io/hostname"},"weight":1}]}},"automountServiceAccountToken":false,"containers":[{"env":[{"name":"BITNAMI_DEBUG","value":"false"},{"name":"CLICKHOUSE_HTTP_PORT","value":"8123"},{"name":"CLICKHOUSE_TCP_PORT","value":"9000"},{"name":"CLICKHOUSE_MYSQL_PORT","value":"9004"},{"name":"CLICKHOUSE_POSTGRESQL_PORT","value":"9005"},{"name":"CLICKHOUSE_INTERSERVER_HTTP_PORT","value":"9009"},{"name":"CLICKHOUSE_SHARD_ID","value":"shard0"},{"name":"CLICKHOUSE_REPLICA_ID","valueFrom":{"fieldRef":{"fieldPath":"metadata.name"}}},{"name":"CLICKHOUSE_ADMIN_USER","value":"default"},{"name":"CLICKHOUSE_ADMIN_PASSWORD_FILE","value":"/opt/bitnami/clickhouse/secrets/admin-password"}],"image":"docker.io/bitnami/clickhouse:25.3.2-debian-12-r3","imagePullPolicy":"IfNotPresent","livenessProbe":{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"tcpSocket":{"port":"http"},"timeoutSeconds":1},"name":"clickhouse","ports":[{"containerPort":8123,"name":"http"},{"containerPort":9000,"name":"tcp"},{"containerPort":9005,"name":"tcp-postgresql"},{"containerPort":9004,"name":"tcp-mysql"},{"containerPort":9009,"name":"http-intersrv"}],"readinessProbe":{"failureThreshold":3,"httpGet":{"path":"/ping","port":"http","scheme":"HTTP"},"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":1},"resources":{"limits":{"cpu":"4","memory":"10Gi"},"requests":{"cpu":"1","memory":"4Gi"}},"securityContext":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":false,"runAsGroup":1001,"runAsNonRoot":true,"runAsUser":1001,"seccompProfile":{"type":"RuntimeDefault"}},"volumeMounts":[{"mountPath":"/var/lib/clickhouse","name":"data"},{"mountPath":"/bitnami/clickhouse/etc/config.d","name":"configd-configuration"},{"mountPath":"/bitnami/clickhouse/etc/users.d","name":"usersd-configuration-configuration"},{"mountPath":"/opt/bitnami/clickhouse/secrets","name":"secrets","readOnly":true},{"mountPath":"/opt/bitnami/clickhouse/etc","name":"empty-dir","subPath":"app-conf-dir"},{"mountPath":"/opt/bitnami/clickhouse/logs","name":"empty-dir","subPath":"app-logs-dir"},{"mountPath":"/opt/bitnami/clickhouse/tmp","name":"empty-dir","subPath":"app-tmp-dir"},{"mountPath":"/tmp","name":"empty-dir","subPath":"tmp-dir"},{"mountPath":"/var/lib/clickhouse/user_scripts","name":"user-scripts"}]}],"imagePullSecrets":[{"name":"regcred"}],"initContainers":[{"command":["bash","-ec","echo \"[fix-permissions] Bitnami non-root setup start\"\nls -la /var/lib/\necho \"[fix-permissions] creating directories\"\nmkdir -p /var/lib/clickhouse/data/preprocessed_configs\nmkdir -p /var/lib/clickhouse/tmp/preprocessed_configs\nmkdir -p /var/lib/clickhouse/user_files\nmkdir -p /var/lib/clickhouse/format_schemas\necho \"[fix-permissions] setting ownership (1001:root)\"\nchown -R 1001:root /var/lib/clickhouse\necho \"[fix-permissions] setting permissions (g+rwX)\"\nchmod -R g+rwX /var/lib/clickhouse\necho \"[fix-permissions] Bitnami non-root setup done\"\nls -la /var/lib/clickhouse/\n"],"image":"docker.io/bitnami/os-shell:12-debian-12-r42","imagePullPolicy":"IfNotPresent","name":"fix-permissions","securityContext":{"runAsGroup":0,"runAsUser":0},"volumeMounts":[{"mountPath":"/var/lib/clickhouse","name":"data"}]},{"command":["cp","/var/lib/clickhouse/user_scripts/histogramQuantile","/user-scripts/"],"image":"imqav3.azurecr.io/clickhouse-server:with-script","imagePullPolicy":"IfNotPresent","name":"copy-binary","volumeMounts":[{"mountPath":"/user-scripts","name":"user-scripts"}]}],"securityContext":{"fsGroup":1001,"fsGroupChangePolicy":"Always"},"serviceAccountName":"clickhouse","volumes":[{"emptyDir":{},"name":"empty-dir"},{"configMap":{"name":"clickhouse-configd"},"name":"configd-configuration"},{"name":"usersd-configuration-configuration","projected":{"sources":[{"configMap":{"name":"clickhouse-usersd"}}]}},{"name":"secrets","secret":{"secretName":"clickhouse"}},{"emptyDir":{},"name":"user-scripts"}]}},"updateStrategy":{"rollingUpdate":{"partition":0},"type":"RollingUpdate"},"volumeClaimTemplates":[{"metadata":{"labels":{"app.kubernetes.io/component":"clickhouse","app.kubernetes.io/instance":"clickhouse","app.kubernetes.io/name":"clickhouse"},"name":"data"},"spec":{"accessModes":["ReadWriteOnce"],"resources":{"requests":{"storage":"100Gi"}},"volumeMode":"Filesystem"}}]}}
+  labels:
+    app.kubernetes.io/component: clickhouse
+    app.kubernetes.io/instance: clickhouse
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: clickhouse
+    app.kubernetes.io/part-of: clickhouse
+    app.kubernetes.io/version: 25.3.2
+    helm.sh/chart: clickhouse-9.1.1
+    shard: "0"
+  name: clickhouse-shard0
+  namespace: test
+spec:
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Retain
+    whenScaled: Retain
+  podManagementPolicy: Parallel
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: clickhouse
+      app.kubernetes.io/instance: clickhouse
+      app.kubernetes.io/name: clickhouse
+      app.kubernetes.io/part-of: clickhouse
+      shard: "0"
+  serviceName: clickhouse-headless
+  template:
+    metadata:
+      annotations:
+        checksum/configd-configuration: 74685ab15115fb284665d0893b0b78accabcca6bdd2bd6606fde5c59499813ee
+        checksum/usersd-configuration: 98241b032296b60ffd3edace4e44c92f89c745ebc9458338d9e89fd6b7a557f5
+        kubectl.kubernetes.io/restartedAt: "2025-08-25T16:44:56+09:00"
+      labels:
+        app.kubernetes.io/component: clickhouse
+        app.kubernetes.io/instance: clickhouse
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: clickhouse
+        app.kubernetes.io/part-of: clickhouse
+        app.kubernetes.io/version: 25.3.2
+        helm.sh/chart: clickhouse-9.1.1
+        shard: "0"
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: clickhouse
+                  app.kubernetes.io/instance: clickhouse
+                  app.kubernetes.io/name: clickhouse
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      automountServiceAccountToken: false
+      containers:
+      - env:
+        - name: BITNAMI_DEBUG
+          value: "false"
+        - name: CLICKHOUSE_HTTP_PORT
+          value: "8123"
+        - name: CLICKHOUSE_TCP_PORT
+          value: "9000"
+        - name: CLICKHOUSE_MYSQL_PORT
+          value: "9004"
+        - name: CLICKHOUSE_POSTGRESQL_PORT
+          value: "9005"
+        - name: CLICKHOUSE_INTERSERVER_HTTP_PORT
+          value: "9009"
+        - name: CLICKHOUSE_SHARD_ID
+          value: shard0
+        - name: CLICKHOUSE_REPLICA_ID
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: CLICKHOUSE_ADMIN_USER
+          value: default
+        - name: CLICKHOUSE_ADMIN_PASSWORD_FILE
+          value: /opt/bitnami/clickhouse/secrets/admin-password
+        image: docker.io/bitnami/clickhouse:25.3.2-debian-12-r3
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: http
+          timeoutSeconds: 1
+        name: clickhouse
+        ports:
+        - containerPort: 8123
+          name: http
+          protocol: TCP
+        - containerPort: 9000
+          name: tcp
+          protocol: TCP
+        - containerPort: 9005
+          name: tcp-postgresql
+          protocol: TCP
+        - containerPort: 9004
+          name: tcp-mysql
+          protocol: TCP
+        - containerPort: 9009
+          name: http-intersrv
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /ping
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: "8"
+            memory: 60Gi
+          requests:
+            cpu: "4"
+            memory: 48Gi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: false
+          runAsGroup: 1001
+          runAsNonRoot: true
+          runAsUser: 1001
+          seccompProfile:
+            type: RuntimeDefault
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/clickhouse
+          name: data
+        - mountPath: /bitnami/clickhouse/etc/config.d
+          name: configd-configuration
+        - mountPath: /bitnami/clickhouse/etc/users.d
+          name: usersd-configuration-configuration
+        - mountPath: /opt/bitnami/clickhouse/secrets
+          name: secrets
+          readOnly: true
+        - mountPath: /opt/bitnami/clickhouse/etc
+          name: empty-dir
+          subPath: app-conf-dir
+        - mountPath: /opt/bitnami/clickhouse/logs
+          name: empty-dir
+          subPath: app-logs-dir
+        - mountPath: /opt/bitnami/clickhouse/tmp
+          name: empty-dir
+          subPath: app-tmp-dir
+        - mountPath: /tmp
+          name: empty-dir
+          subPath: tmp-dir
+        - mountPath: /var/lib/clickhouse/user_scripts
+          name: user-scripts
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: regcred
+      initContainers:
+      - command:
+        - bash
+        - -ec
+        - |
+          echo "[fix-permissions] Bitnami non-root setup start"
+          ls -la /var/lib/
+          echo "[fix-permissions] creating directories"
+          mkdir -p /var/lib/clickhouse/data/preprocessed_configs
+          mkdir -p /var/lib/clickhouse/tmp/preprocessed_configs
+          mkdir -p /var/lib/clickhouse/user_files
+          mkdir -p /var/lib/clickhouse/format_schemas
+          echo "[fix-permissions] setting ownership (1001:root)"
+          chown -R 1001:root /var/lib/clickhouse
+          echo "[fix-permissions] setting permissions (g+rwX)"
+          chmod -R g+rwX /var/lib/clickhouse
+          echo "[fix-permissions] Bitnami non-root setup done"
+          ls -la /var/lib/clickhouse/
+        image: docker.io/bitnami/os-shell:12-debian-12-r42
+        imagePullPolicy: IfNotPresent
+        name: fix-permissions
+        resources: {}
+        securityContext:
+          runAsGroup: 0
+          runAsUser: 0
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/clickhouse
+          name: data
+      - command:
+        - cp
+        - /var/lib/clickhouse/user_scripts/histogramQuantile
+        - /user-scripts/
+        image: imqav3.azurecr.io/clickhouse-server:with-script
+        imagePullPolicy: IfNotPresent
+        name: copy-binary
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /user-scripts
+          name: user-scripts
+      nodeSelector:
+        node-purpose: clickhouse-db
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+      serviceAccount: clickhouse
+      serviceAccountName: clickhouse
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - effect: NoSchedule
+        key: dedicated
+        operator: Equal
+        value: clickhouse
+      volumes:
+      - emptyDir: {}
+        name: empty-dir
+      - configMap:
+          defaultMode: 420
+          name: clickhouse-configd
+        name: configd-configuration
+      - name: usersd-configuration-configuration
+        projected:
+          defaultMode: 420
+          sources:
+          - configMap:
+              name: clickhouse-usersd
+      - name: secrets
+        secret:
+          defaultMode: 420
+          secretName: clickhouse
+      - emptyDir: {}
+        name: user-scripts
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      labels:
+        app.kubernetes.io/component: clickhouse
+        app.kubernetes.io/instance: clickhouse
+        app.kubernetes.io/name: clickhouse
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Gi
+      volumeMode: Filesystem
+    status:
+      phase: Pending
