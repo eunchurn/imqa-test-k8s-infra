@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 원하는 네임스페이스 지정
-NS=test
+NS="test"
 CONTEXT=$(kubectl config current-context 2>/dev/null || echo "default")
 BASE_DIR="${CONTEXT}/${NS}"
 
