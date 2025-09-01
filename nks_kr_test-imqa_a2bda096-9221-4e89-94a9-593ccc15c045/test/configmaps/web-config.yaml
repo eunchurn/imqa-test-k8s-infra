@@ -14,7 +14,5 @@ data:
 kind: ConfigMap
 metadata:
   annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"NEXTAUTH_URL":"https://test-imqa.imqa.io/api/auth","NEXT_PUBLIC_API_URL":"https://test-imqa.imqa.io","NEXT_PUBLIC_APP_URL":"https://test-imqa.imqa.io","NEXT_PUBLIC_DEFAULT_LOGIN_SAML":"false","NEXT_PUBLIC_MAPPING_FILE":"true","NEXT_PUBLIC_QUERY_BUILDER":"false","NEXT_PUBLIC_SAML_FEDERATION_MODE":"false","NEXT_PUBLIC_SERVICE_MODE":"true","NEXT_TELEMETRY_DISABLED":"1","OIDC_CLIENT_ID":"imqa-service","OIDC_ISSUER":"https://test-imqa.imqa.io/realms/imqa"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"web-config","namespace":"test"}}
   name: web-config
   namespace: test

@@ -4,18 +4,17 @@ metadata:
   annotations:
     deployment.kubernetes.io/desired-replicas: "1"
     deployment.kubernetes.io/max-replicas: "2"
-    deployment.kubernetes.io/revision: "31"
   labels:
     app: api
     pod-template-hash: 8f8df5cb8
   name: api-8f8df5cb8
   namespace: test
   ownerReferences:
-  - apiVersion: apps/v1
     blockOwnerDeletion: true
     controller: true
     kind: Deployment
     name: api
+
 spec:
   replicas: 0
   selector:
@@ -25,43 +24,27 @@ spec:
   template:
     metadata:
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2025-08-19T17:18:00+09:00"
       labels:
         app: api
         pod-template-hash: 8f8df5cb8
     spec:
       containers:
-      - envFrom:
-        - configMapRef:
             name: api-config
-        - secretRef:
             name: api-secret-v2
         image: imqav3.azurecr.io/api:1.4.3
         imagePullPolicy: Always
         name: api
         ports:
-        - containerPort: 8000
           protocol: TCP
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         volumeMounts:
-        - mountPath: /app/uploads
           name: data-volume
-        - mountPath: /app/config/saml/
           name: config-volume
       dnsPolicy: ClusterFirst
       imagePullSecrets:
-      - name: regcred
       initContainers:
-      - command:
-        - sh
-        - -c
-        - "mkdir -p /app/config/saml &&\ncp -r /configs/saml/onycom-idp-metadata.xml
-          /app/config/saml/onycom-idp-metadata.xml &&\ncp -r /configs/saml/configs-local-build.json
-          /app/config/saml/configs-local.json &&\ncp -r /ssl/imqa_io/imqa_ssl.key
-          /app/config/saml/sp_private.key &&\ncp -r /ssl/imqa_io/imqa_ssl.crt /app/config/saml/sp_cert.crt
-          &&\necho \"Copied files:\" &&\nls -al /app/config/saml              \n"
         image: imqav3.azurecr.io/init-config:1.0.0
         imagePullPolicy: Always
         name: config-init
@@ -69,7 +52,6 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         volumeMounts:
-        - mountPath: /app/config/saml/
           name: config-volume
       restartPolicy: Always
       schedulerName: default-scheduler
@@ -79,8 +61,6 @@ spec:
         runAsUser: 1001
       terminationGracePeriodSeconds: 30
       volumes:
-      - name: data-volume
         persistentVolumeClaim:
           claimName: data-api-0
-      - emptyDir: {}
         name: config-volume

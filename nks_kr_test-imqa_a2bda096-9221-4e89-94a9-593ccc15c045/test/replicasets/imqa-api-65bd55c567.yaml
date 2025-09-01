@@ -4,18 +4,17 @@ metadata:
   annotations:
     deployment.kubernetes.io/desired-replicas: "1"
     deployment.kubernetes.io/max-replicas: "2"
-    deployment.kubernetes.io/revision: "8"
   labels:
     app: imqa-api
     pod-template-hash: 65bd55c567
   name: imqa-api-65bd55c567
   namespace: test
   ownerReferences:
-  - apiVersion: apps/v1
     blockOwnerDeletion: true
     controller: true
     kind: Deployment
     name: imqa-api
+
 spec:
   replicas: 1
   selector:
@@ -25,38 +24,29 @@ spec:
   template:
     metadata:
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2025-08-10T14:36:47+09:00"
       labels:
         app: imqa-api
         pod-template-hash: 65bd55c567
     spec:
       containers:
-      - envFrom:
-        - configMapRef:
             name: api-config
-        - secretRef:
             name: api-secret-v2
         image: imqav3.azurecr.io/imqa-api:1.4.1
         imagePullPolicy: Always
         name: imqa-api
         ports:
-        - containerPort: 8080
           protocol: TCP
-        - containerPort: 8085
           protocol: TCP
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         volumeMounts:
-        - mountPath: /data
           name: data-volume
       dnsPolicy: ClusterFirst
       imagePullSecrets:
-      - name: regcred
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
       volumes:
-      - emptyDir: {}
         name: data-volume

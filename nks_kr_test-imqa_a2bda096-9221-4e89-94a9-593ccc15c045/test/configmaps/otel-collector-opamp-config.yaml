@@ -6,7 +6,5 @@ data:
 kind: ConfigMap
 metadata:
   annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"v1","data":{"manager-config.yaml":"# server_endpoint: ws://query-service:4320/v1/opamp\nserver_endpoint: ws://host.docker.internal:4320/v1/opamp\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"otel-collector-opamp-config","namespace":"test"}}
   name: otel-collector-opamp-config
   namespace: test

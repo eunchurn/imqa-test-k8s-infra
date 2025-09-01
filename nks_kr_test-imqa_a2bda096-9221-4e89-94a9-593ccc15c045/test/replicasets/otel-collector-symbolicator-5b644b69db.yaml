@@ -4,18 +4,17 @@ metadata:
   annotations:
     deployment.kubernetes.io/desired-replicas: "1"
     deployment.kubernetes.io/max-replicas: "2"
-    deployment.kubernetes.io/revision: "5"
   labels:
     app: otel-collector-symbolicator
     pod-template-hash: 5b644b69db
   name: otel-collector-symbolicator-5b644b69db
   namespace: test
   ownerReferences:
-  - apiVersion: apps/v1
     blockOwnerDeletion: true
     controller: true
     kind: Deployment
     name: otel-collector-symbolicator
+
 spec:
   replicas: 1
   selector:
@@ -25,48 +24,36 @@ spec:
   template:
     metadata:
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2025-08-14T18:33:23+09:00"
       labels:
         app: otel-collector-symbolicator
         pod-template-hash: 5b644b69db
     spec:
       containers:
-      - args:
-        - --config=/etc/otel-collector-symbolicator-config.yaml
         env:
-        - name: CONFIG_PATH
           value: /etc/otel-collector-symbolicator-config.yaml
-        - name: SERVICE_HOST
           value: default:e0rdBg86jm@clickhouse.test.svc.cluster.local:9000
-        - name: API_DOMAIN
           value: https://test-imqa.imqa.io
-        - name: OTEL_COLLECTOR_SYMBOLICATOR_API_HOST
           value: http://api.test.svc.cluster.local:8000
-        - name: OTEL_COLLECTOR_SYMBOLICATOR_CLICKHOUSE_DSN
           value: tcp://default:e0rdBg86jm@clickhouse.test.svc.cluster.local:9000
         image: imqav3.azurecr.io/otel-collector-symbolicator:1.4.0
         imagePullPolicy: Always
         name: otel-collector-symbolicator
         ports:
-        - containerPort: 4319
           name: otlp-http
           protocol: TCP
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         volumeMounts:
-        - mountPath: /etc/otel-collector-symbolicator-config.yaml
           name: config-volume
           subPath: otel-collector-symbolicator-config.yaml
       dnsPolicy: ClusterFirst
       imagePullSecrets:
-      - name: regcred
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
       volumes:
-      - configMap:
           defaultMode: 420
           name: otel-collector-symbolicator-config
         name: config-volume

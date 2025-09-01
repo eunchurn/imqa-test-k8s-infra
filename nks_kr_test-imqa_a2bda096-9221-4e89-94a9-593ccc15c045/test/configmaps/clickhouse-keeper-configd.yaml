@@ -13,8 +13,6 @@ data:
 kind: ConfigMap
 metadata:
   annotations:
-    meta.helm.sh/release-name: clickhouse
-    meta.helm.sh/release-namespace: test
   labels:
     app.kubernetes.io/component: keeper
     app.kubernetes.io/instance: clickhouse

@@ -4,18 +4,17 @@ metadata:
   annotations:
     deployment.kubernetes.io/desired-replicas: "1"
     deployment.kubernetes.io/max-replicas: "2"
-    deployment.kubernetes.io/revision: "13"
   labels:
     app: imqa-web
     pod-template-hash: 5578f585d9
   name: imqa-web-5578f585d9
   namespace: test
   ownerReferences:
-  - apiVersion: apps/v1
     blockOwnerDeletion: true
     controller: true
     kind: Deployment
     name: imqa-web
+
 spec:
   replicas: 0
   selector:
@@ -25,32 +24,25 @@ spec:
   template:
     metadata:
       annotations:
-        kubectl.kubernetes.io/restartedAt: "2025-08-10T14:36:47+09:00"
       labels:
         app: imqa-web
         pod-template-hash: 5578f585d9
     spec:
       containers:
-      - env:
-        - name: SCOPE
           value: web
         envFrom:
-        - configMapRef:
             name: api-config
-        - secretRef:
             name: api-secret
         image: imqav3.azurecr.io/imqa-web-frontend:1.4.0-rc.1.10
         imagePullPolicy: Always
         name: imqa-web
         ports:
-        - containerPort: 3000
           protocol: TCP
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
       imagePullSecrets:
-      - name: regcred
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
