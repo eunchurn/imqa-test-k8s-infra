@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  annotations:
+    deployment.kubernetes.io/desired-replicas: "0"
+    deployment.kubernetes.io/max-replicas: "0"
+  labels:
+    app: api
+    pod-template-hash: 6f88ddf846
+  name: api-6f88ddf846
+  namespace: nhbank
+  ownerReferences:
+    blockOwnerDeletion: true
+    controller: true
+    kind: Deployment
+    name: api
+
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: api
+      pod-template-hash: 6f88ddf846
+  template:
+    metadata:
+      annotations:
+      labels:
+        app: api
+        pod-template-hash: 6f88ddf846
+    spec:
+      containers:
+            name: api-config
+            name: api-secret
+        image: imqav3.azurecr.io/api:1.4.0-rc.1.13
+        imagePullPolicy: IfNotPresent
+        name: api
+        ports:
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+          name: data-volume
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 65533
+        runAsGroup: 65533
+        runAsUser: 1001
+      terminationGracePeriodSeconds: 30
+      volumes:
+        persistentVolumeClaim:
+          claimName: data-api-0

@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  NEXT_PUBLIC_API_URL: https://nhbank.imqa.io
+  NEXT_PUBLIC_APP_URL: https://nhbank.imqa.io
+  NEXT_PUBLIC_MAPPING_FILE: "true"
+  NEXT_PUBLIC_QUERY_BUILDER: "false"
+  NEXT_PUBLIC_SERVICE_MODE: "true"
+  NEXTAUTH_URL: https://nhbank.imqa.io/api/auth
+  OIDC_CLIENT_ID: imqa-service
+  OIDC_ISSUER: https://nhbank.imqa.io/realms/imqa
+kind: ConfigMap
+metadata:
+  annotations:
+  name: web-config
+  namespace: nhbank

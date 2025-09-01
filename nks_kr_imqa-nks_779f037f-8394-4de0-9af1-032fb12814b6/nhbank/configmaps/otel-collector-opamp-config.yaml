@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  manager-config.yaml: |
+    # server_endpoint: ws://query-service:4320/v1/opamp
+    server_endpoint: ws://host.docker.internal:4320/v1/opamp
+kind: ConfigMap
+metadata:
+  annotations:
+  name: otel-collector-opamp-config
+  namespace: nhbank

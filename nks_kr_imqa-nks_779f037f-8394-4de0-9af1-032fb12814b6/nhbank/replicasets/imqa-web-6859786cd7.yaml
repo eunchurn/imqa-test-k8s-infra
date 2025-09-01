@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  annotations:
+    deployment.kubernetes.io/desired-replicas: "1"
+    deployment.kubernetes.io/max-replicas: "2"
+  labels:
+    app: imqa-web
+    pod-template-hash: 6859786cd7
+  name: imqa-web-6859786cd7
+  namespace: nhbank
+  ownerReferences:
+    blockOwnerDeletion: true
+    controller: true
+    kind: Deployment
+    name: imqa-web
+
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: imqa-web
+      pod-template-hash: 6859786cd7
+  template:
+    metadata:
+      annotations:
+      labels:
+        app: imqa-web
+        pod-template-hash: 6859786cd7
+    spec:
+      containers:
+          value: web
+        envFrom:
+            name: api-config
+            name: api-secret
+        image: imqav3.azurecr.io/imqa-web-frontend:1.4.0-rc.1.11
+        imagePullPolicy: IfNotPresent
+        name: imqa-web
+        ports:
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
